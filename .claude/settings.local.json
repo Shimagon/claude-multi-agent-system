@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl*)",
+      "Bash(npm*)",
+      "Bash(npx*)",
+      "Bash(cat*)",
+      "Bash(ls*)",
+      "Bash(mkdir*)",
+      "Bash(chmod*)",
+      "Bash(rm ./ai-team/results/*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd multi-agent AI system with VSCode extension PM\n\nマルチエージェントシステム構築完了：\n- VSCode拡張Claude（PM）+ 3 terminal agents \\(dev1/dev2/dev3\\)\n- tmux経由での並列タスク実行\n- ファイルベース同期システム\n- ワンコマンド自動起動\n- トークン最適化戦略実装\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
