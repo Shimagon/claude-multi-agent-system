@@ -31,51 +31,75 @@ wsl -e bash -c "echo '=== 環境確認 ==='; \
 
 ## ステップ1: パスを確認
 
-### 1-1. 現在のプロジェクトパスを取得
+### 重要：プロジェクトのパスについて
 
-```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && pwd"
+このプロジェクトは**WindowsのCドライブ**にある場合、WSLからは以下のパスでアクセスします：
+
+```
+/mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system
 ```
 
-このコマンドで表示されたパスをメモしてください。
+**YOUR_USERNAME** の部分をあなたのWindowsユーザー名に置き換えてください。
 
-例: `/home/taise/Documents/GitHub/claude-multi-agent-system`
-
-> **注意**: 以降のコマンド例では `/home/USERNAME/...` の部分を、
-> あなたの実際のパスに置き換えて使ってください。
-
-### 1-2. パス自動取得（推奨）
-
-以下のコマンドを使えば、自動的に正しいパスでコマンドが生成されます：
+### パスを確認するコマンド
 
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/helper-commands.sh"
+# Windowsユーザー名を確認
+cmd.exe /c "echo %USERNAME%"
+
+# プロジェクトパスを確認
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && pwd"
+```
+
+### パス自動取得（推奨）
+
+以下のコマンドで、あなた専用のコマンドが自動生成されます：
+
+```bash
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/helper-commands.sh"
+```
+
+**例（ユーザー名が `taise` の場合）:**
+```bash
+wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/helper-commands.sh"
 ```
 
 ---
 
 ## ステップ2: システム起動
 
-### 2-1. マルチエージェントシステムを起動
+### 推奨：監視画面付きで起動（エージェントの動きが見える）
+
+**新しいWindows Terminalまたはコマンドプロンプトで実行：**
 
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/start-and-watch.sh"
 ```
 
-**出力例:**
-```
-🚀 マルチエージェントシステムを起動中...
-📦 tmuxセッションを起動...
-✅ マルチエージェントシステム準備完了！
+これで自動的にtmux監視画面が開き、3つのエージェント（dev1/dev2/dev3）の動作がリアルタイムで見えます。
+
+**tmux画面の操作:**
+- `Ctrl+B` → `↑↓←→` : ペイン間を移動
+- `Ctrl+B` → `d` : 監視画面を閉じる（エージェントは動き続ける）
+- `Ctrl+C` : 現在のコマンドをキャンセル
+
+### 別の方法：バックグラウンドで起動（監視画面なし）
+
+```bash
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
-### 2-2. 起動確認
-
+**起動確認:**
 ```bash
 wsl -e bash -c "tmux list-sessions"
 ```
 
 `team` というセッションが表示されればOK。
+
+**後から監視画面を開く:**
+```bash
+wsl -e bash -c "tmux attach -t team"
+```
 
 ---
 
@@ -85,17 +109,17 @@ wsl -e bash -c "tmux list-sessions"
 
 #### 例1: README.mdを調査
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告'"
 ```
 
 #### 例2: ai-teamフォルダを調査
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'ai-teamフォルダ内のスクリプトファイルをリストアップして、それぞれの役割を簡単に説明。完了後results/dev2_result.txtに報告'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'ai-teamフォルダ内のスクリプトファイルをリストアップして、それぞれの役割を簡単に説明。完了後results/dev2_result.txtに報告'"
 ```
 
 #### 例3: QUICKSTART.mdの行数をカウント
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'QUICKSTART.mdの総行数を調べて報告。完了後results/dev1_result.txtに報告'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'QUICKSTART.mdの総行数を調べて報告。完了後results/dev1_result.txtに報告'"
 ```
 
 ---
@@ -105,7 +129,7 @@ wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/sen
 ### 全エージェントの結果を一度に確認
 
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
 ```
 
 ---
@@ -124,27 +148,27 @@ wsl -e bash -c "tmux kill-session -t team"
 
 ### 起動
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
 ### タスク送信（dev1 - フロントエンド担当）
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 '[ここにタスク内容]'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 '[ここにタスク内容]'"
 ```
 
 ### タスク送信（dev2 - バックエンド担当）
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 '[ここにタスク内容]'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 '[ここにタスク内容]'"
 ```
 
 ### タスク送信（dev3 - テスト・調査担当）
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 '[ここにタスク内容]'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 '[ここにタスク内容]'"
 ```
 
 ### 結果確認
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
 ```
 
 ### 停止
@@ -175,7 +199,7 @@ wsl -e bash -c "sudo apt update && sudo apt install tmux -y"
 wsl -e bash -c "tmux kill-session -t team"
 
 # 再度起動
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
 ### エラー: `claude: command not found`
@@ -197,7 +221,7 @@ wsl -e bash -c "exec \$SHELL"
 
 **解決方法**:
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && chmod +x ./ai-team/*.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && chmod +x ./ai-team/*.sh"
 ```
 
 ### タスクを送っても反応がない
@@ -223,7 +247,7 @@ wsl -e bash -c "claude login"
 **解決方法**:
 ```bash
 # 結果ファイルをクリア
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && rm -f ./ai-team/results/*.txt"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && rm -f ./ai-team/results/*.txt"
 
 # 再度タスクを送信
 ```

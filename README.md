@@ -100,10 +100,16 @@ chmod +x ./ai-team/*.sh
 
 #### 初回起動（新しいClaudeセッションの場合）
 
-VSCode拡張Claudeに以下のコマンドを貼り付けて実行：
+**推奨：監視画面付きで起動（エージェントの動きが見える）**
 
+新しいWindows Terminalで実行：
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/start-and-watch.sh"
+```
+
+または、バックグラウンドで起動（VSCode拡張Claude経由）：
+```bash
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
 #### タスク送信（実際に動く例）
@@ -112,16 +118,16 @@ wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-tea
 
 ```bash
 # 例1: README.mdを調査
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告'"
 
 # 例2: ai-teamフォルダのスクリプトを調査
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'ai-teamフォルダ内のスクリプトファイルをリストアップして役割を説明。完了後results/dev2_result.txtに報告'"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'ai-teamフォルダ内のスクリプトファイルをリストアップして役割を説明。完了後results/dev2_result.txtに報告'"
 ```
 
 #### 結果確認
 
 ```bash
-wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
 ```
 
 ## 📚 ドキュメント
