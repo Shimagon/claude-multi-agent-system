@@ -2,28 +2,74 @@
 
 新しいVSCode拡張Claudeセッションでマルチエージェントシステムを使う方法
 
-## 📍 重要：パスを確認
+---
 
-以下のコマンドで、あなたのプロジェクトパスを確認してください：
+## ⚠️ 始める前に
+
+環境構築がまだの場合は、まず [SETUP.md](SETUP.md) を完了してください。
+
+---
+
+## ステップ0: 環境確認
+
+以下のコマンドをVSCode拡張Claudeに貼り付けて実行してください。
+
+すべてOKになれば次に進めます：
+
 ```bash
-pwd
+wsl -e bash -c "echo '=== 環境確認 ==='; \
+  echo -n '✅ WSL: '; wsl --version | head -1; \
+  echo -n '✅ tmux: '; tmux -V; \
+  echo -n '✅ Node.js: '; node --version; \
+  echo -n '✅ Claude CLI: '; claude --version; \
+  echo -n '✅ Claude Login: '; claude whoami || echo '❌ 未ログイン - claude login を実行してください'"
 ```
 
-例：`/mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system`
+**すべて✅が表示されたら準備完了です！**
 
-## 🚀 ステップ1：システム起動
+---
 
-VSCode拡張Claudeに以下を貼り付けて実行：
+## ステップ1: パスを確認
+
+### 1-1. 現在のプロジェクトパスを取得
 
 ```bash
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && pwd"
 ```
 
-**重要**: `taise` の部分をあなたのWindowsユーザー名に置き換えてください。
+このコマンドで表示されたパスをメモしてください。
 
-## ✅ ステップ2：起動確認
+例: `/home/taise/Documents/GitHub/claude-multi-agent-system`
 
-以下のコマンドで、3つのエージェント（dev1, dev2, dev3）が起動しているか確認：
+> **注意**: 以降のコマンド例では `/home/USERNAME/...` の部分を、
+> あなたの実際のパスに置き換えて使ってください。
+
+### 1-2. パス自動取得（推奨）
+
+以下のコマンドを使えば、自動的に正しいパスでコマンドが生成されます：
+
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/helper-commands.sh"
+```
+
+---
+
+## ステップ2: システム起動
+
+### 2-1. マルチエージェントシステムを起動
+
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+```
+
+**出力例:**
+```
+🚀 マルチエージェントシステムを起動中...
+📦 tmuxセッションを起動...
+✅ マルチエージェントシステム準備完了！
+```
+
+### 2-2. 起動確認
 
 ```bash
 wsl -e bash -c "tmux list-sessions"
@@ -31,60 +77,158 @@ wsl -e bash -c "tmux list-sessions"
 
 `team` というセッションが表示されればOK。
 
-## 📤 ステップ3：タスクを送る
+---
 
-### dev1にタスクを送信（フロントエンド担当）
+## ステップ3: タスクを送る
+
+### 実際に動く例（このリポジトリで試せます）
+
+#### 例1: README.mdを調査
 ```bash
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'src/components/Button.tsx を作成。Reactのボタンコンポーネント。完了後results/dev1_result.txtに報告'"
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告'"
 ```
 
-### dev2にタスクを送信（バックエンド担当）
+#### 例2: ai-teamフォルダを調査
 ```bash
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'api/login.ts を作成。ログインAPIエンドポイント。完了後results/dev2_result.txtに報告'"
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'ai-teamフォルダ内のスクリプトファイルをリストアップして、それぞれの役割を簡単に説明。完了後results/dev2_result.txtに報告'"
 ```
 
-### dev3にタスクを送信（テスト・調査担当）
+#### 例3: QUICKSTART.mdの行数をカウント
 ```bash
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'package.json を調査して、使用している主要ライブラリをリストアップ。完了後results/dev3_result.txtに報告'"
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'QUICKSTART.mdの総行数を調べて報告。完了後results/dev1_result.txtに報告'"
 ```
 
-## 📊 ステップ4：結果を確認
+---
 
-全エージェントの結果を一度に確認：
+## ステップ4: 結果を確認
+
+### 全エージェントの結果を一度に確認
+
 ```bash
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
 ```
 
-## 🛑 システム停止
+---
+
+## ステップ5: システム停止
 
 作業が終わったら、tmuxセッションを終了：
+
 ```bash
 wsl -e bash -c "tmux kill-session -t team"
 ```
 
-## 💡 ヒント
+---
 
-### コマンドテンプレート（コピペ用）
+## 💡 コマンドテンプレート（コピペ用）
 
-起動：
-```
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
-```
-
-タスク送信（dev1）：
-```
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 '[ここにタスク内容]'"
+### 起動
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
-結果確認：
-```
-wsl -e bash -c "cd /mnt/c/Users/taise/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+### タスク送信（dev1 - フロントエンド担当）
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 '[ここにタスク内容]'"
 ```
 
-停止：
+### タスク送信（dev2 - バックエンド担当）
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 '[ここにタスク内容]'"
 ```
+
+### タスク送信（dev3 - テスト・調査担当）
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 '[ここにタスク内容]'"
+```
+
+### 結果確認
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+```
+
+### 停止
+```bash
 wsl -e bash -c "tmux kill-session -t team"
 ```
+
+---
+
+## ❗ トラブルシューティング
+
+### エラー: `tmux: command not found`
+
+**原因**: tmuxがインストールされていない
+
+**解決方法**:
+```bash
+wsl -e bash -c "sudo apt update && sudo apt install tmux -y"
+```
+
+### エラー: `session already exists: team`
+
+**原因**: tmuxセッションが既に起動している
+
+**解決方法**:
+```bash
+# 既存セッションを削除
+wsl -e bash -c "tmux kill-session -t team"
+
+# 再度起動
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+```
+
+### エラー: `claude: command not found`
+
+**原因**: Claude Code CLIがインストールされていない、またはパスが通っていない
+
+**解決方法**:
+```bash
+# npmでグローバルインストール
+wsl -e bash -c "npm install -g @anthropic-ai/claude-code"
+
+# または、ターミナルを再起動
+wsl -e bash -c "exec \$SHELL"
+```
+
+### エラー: `Permission denied`
+
+**原因**: スクリプトに実行権限がない
+
+**解決方法**:
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && chmod +x ./ai-team/*.sh"
+```
+
+### タスクを送っても反応がない
+
+**原因**: Claude Code CLIがログインしていない
+
+**確認**:
+```bash
+wsl -e bash -c "claude whoami"
+```
+
+**解決方法**:
+```bash
+wsl -e bash -c "claude login"
+```
+
+ブラウザで表示されたURLを開き、認証コードをコピーしてターミナルに貼り付け。
+
+### 結果ファイルが空、または古い
+
+**原因**: 前回の結果が残っている
+
+**解決方法**:
+```bash
+# 結果ファイルをクリア
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && rm -f ./ai-team/results/*.txt"
+
+# 再度タスクを送信
+```
+
+---
 
 ## 🎯 VSCode拡張Claudeに何を伝えるか
 
@@ -93,7 +237,15 @@ wsl -e bash -c "tmux kill-session -t team"
 ```
 このプロジェクトはマルチエージェントシステムです。
 QUICKSTART.mdを読んで、システムを起動してください。
-その後、[あなたのタスク内容]を3つのエージェントに振り分けて実行してください。
+その後、README.mdを調査するタスクをdev3に送って、結果を報告してください。
 ```
 
 Claudeがこのファイルを読めば、自動的に適切なコマンドを実行してくれます。
+
+---
+
+## 📚 次のステップ
+
+- [COMPLETE_GUIDE.md](ai-team/COMPLETE_GUIDE.md) - 詳細な使い方とトークン最適化戦略
+- [README.md](README.md) - プロジェクト概要と特徴
+- [developer.md](ai-team/instructions/developer.md) - サブエージェント用ルール

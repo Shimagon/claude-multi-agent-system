@@ -44,6 +44,21 @@ PM（VSCode拡張Claude）
 
 ## 🚀 クイックスタート
 
+### 前提条件チェック
+
+始める前に、以下の環境確認コマンドを実行してください：
+
+```bash
+wsl -e bash -c "echo '=== 環境確認 ==='; \
+  echo -n '✅ WSL: '; wsl --version | head -1; \
+  echo -n '✅ tmux: '; tmux -V; \
+  echo -n '✅ Node.js: '; node --version; \
+  echo -n '✅ Claude CLI: '; claude --version; \
+  echo -n '✅ Claude Login: '; claude whoami || echo '❌ 未ログイン'"
+```
+
+すべて✅が表示されない場合は、[SETUP.md](SETUP.md) で環境構築を完了してください。
+
 ### 必要環境
 - Windows 11 + WSL2 + Ubuntu
 - tmux
@@ -53,9 +68,16 @@ PM（VSCode拡張Claude）
 
 ### セットアップ
 
+#### 初めての方
+
+完全な環境構築手順は [SETUP.md](SETUP.md) を参照してください。
+
+#### すでに環境が整っている方
+
 1. **リポジトリをクローン**
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-multi-agent-system.git
+cd ~/Documents/GitHub
+git clone https://github.com/Shimagon/claude-multi-agent-system.git
 cd claude-multi-agent-system
 ```
 
@@ -69,7 +91,7 @@ chmod +x ./ai-team/*.sh
 ./ai-team/auto-start.sh
 ```
 
-4. **各ペインでClaude Codeにログイン**
+4. **各ペインでClaude Codeにログイン**（初回のみ）
    - ブラウザでログインURLを開く
    - 認証コードをコピー＆ペースト
    - "Yes, I accept" を選択（bypass permissions）
@@ -80,36 +102,35 @@ chmod +x ./ai-team/*.sh
 
 VSCode拡張Claudeに以下のコマンドを貼り付けて実行：
 
-```
-wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
-```
-
-または、直接WSLで実行：
 ```bash
-cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system
-./ai-team/auto-start.sh
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
-#### タスク送信
+#### タスク送信（実際に動く例）
 
 エージェントが起動したら、VSCode拡張Claudeから指示を送る：
 
-```
-wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'src/components/Login.tsx を作成して、ログインフォームを実装'"
+```bash
+# 例1: README.mdを調査
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告'"
+
+# 例2: ai-teamフォルダのスクリプトを調査
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev2 'ai-teamフォルダ内のスクリプトファイルをリストアップして役割を説明。完了後results/dev2_result.txtに報告'"
 ```
 
 #### 結果確認
 
-```
-wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
+```bash
+wsl -e bash -c "cd ~/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
 ```
 
 ## 📚 ドキュメント
 
-- **[クイックスタート](QUICKSTART.md)** - 新しいClaudeセッション用コマンド集（重要！）
-- [完全ガイド](ai-team/COMPLETE_GUIDE.md) - 詳細な使い方とトークン最適化戦略
-- [セットアップメモ](ai-team/SETUP_MEMO.md) - 環境構築手順
-- [Developer指示書](ai-team/instructions/developer.md) - サブエージェント用ルール
+- **[SETUP.md](SETUP.md)** - 完全な環境構築ガイド（初心者向け）
+- **[QUICKSTART.md](QUICKSTART.md)** - 新しいClaudeセッション用コマンド集（重要！）
+- [COMPLETE_GUIDE.md](ai-team/COMPLETE_GUIDE.md) - 詳細な使い方とトークン最適化戦略
+- [SETUP_MEMO.md](ai-team/SETUP_MEMO.md) - 環境構築メモ
+- [developer.md](ai-team/instructions/developer.md) - サブエージェント用ルール
 
 ## 🎯 トークン削減戦略
 
@@ -148,6 +169,21 @@ claude-monitor --timezone Asia/Tokyo
 ### シングルで十分
 - 1ファイル修正
 - 単一機能実装
+
+## ❗ トラブルシューティング
+
+### よくあるエラーと対処法
+
+| エラー | 原因 | 解決方法 |
+|--------|------|----------|
+| `tmux: command not found` | tmux未インストール | `wsl -e bash -c "sudo apt install tmux -y"` |
+| `session already exists: team` | tmuxセッション起動済み | `wsl -e bash -c "tmux kill-session -t team"` |
+| `claude: command not found` | Claude CLI未インストール | `wsl -e bash -c "npm install -g @anthropic-ai/claude-code"` |
+| `Permission denied` | 実行権限なし | `wsl -e bash -c "chmod +x ./ai-team/*.sh"` |
+| タスクに反応しない | Claude未ログイン | `wsl -e bash -c "claude login"` |
+| 結果ファイルが空 | 前回の結果が残存 | `wsl -e bash -c "rm -f ./ai-team/results/*.txt"` |
+
+詳細は [QUICKSTART.md](QUICKSTART.md#❗-トラブルシューティング) を参照してください。
 
 ## 📅 作成日
 2026年1月19日
