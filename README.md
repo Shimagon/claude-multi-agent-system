@@ -2,6 +2,19 @@
 
 VSCode拡張Claude（PM）+ 3 Terminal Claude（dev1/dev2/dev3）によるマルチエージェント開発システム
 
+## 🆕 新しいClaudeセッションの方へ
+
+このプロジェクトを初めて使う、または新しいClaudeセッションで開いた場合：
+
+1. **[QUICKSTART.md](QUICKSTART.md) を読んでください** - すぐに使えるコマンドが全て記載されています
+2. または、Claudeに以下のように指示してください：
+
+```
+QUICKSTART.mdを読んで、マルチエージェントシステムを起動してください
+```
+
+これだけで自動的にシステムが立ち上がります。
+
 ## 🌟 特徴
 
 - **VSCode拡張ClaudeがPM役**: 画像も送れる、会話履歴を保持
@@ -63,15 +76,37 @@ chmod +x ./ai-team/*.sh
 
 ### 使い方
 
-VSCode拡張Claudeに話しかけるだけ：
+#### 初回起動（新しいClaudeセッションの場合）
+
+VSCode拡張Claudeに以下のコマンドを貼り付けて実行：
+
 ```
-「マルチスタート」
-「dev1にログイン画面作って」
-「dev2にAPI作って、dev3でテストして」
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
+```
+
+または、直接WSLで実行：
+```bash
+cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system
+./ai-team/auto-start.sh
+```
+
+#### タスク送信
+
+エージェントが起動したら、VSCode拡張Claudeから指示を送る：
+
+```
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'src/components/Login.tsx を作成して、ログインフォームを実装'"
+```
+
+#### 結果確認
+
+```
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/check-results.sh"
 ```
 
 ## 📚 ドキュメント
 
+- **[クイックスタート](QUICKSTART.md)** - 新しいClaudeセッション用コマンド集（重要！）
 - [完全ガイド](ai-team/COMPLETE_GUIDE.md) - 詳細な使い方とトークン最適化戦略
 - [セットアップメモ](ai-team/SETUP_MEMO.md) - 環境構築手順
 - [Developer指示書](ai-team/instructions/developer.md) - サブエージェント用ルール
