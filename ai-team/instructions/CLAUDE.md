@@ -52,23 +52,47 @@ VSCode拡張Claudeから直接tmux attach しても、ユーザーには見え�
 wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && bash ./ai-team/auto-start.sh"
 ```
 
-### ステップ4: タスクの振り分け
+### ステップ4: タスクの振り分けとモデル選択
 
 ユーザーからタスクを受け取ったら：
 
 1. **タスクを分析**して、dev1（フロントエンド）、dev2（バックエンド）、dev3（テスト・調査）に振り分け
-2. **具体的で明確な指示**を作成（トークン最適化のため）
-3. **send-and-wait.sh** を使ってタスクを送信
-4. **結果を確認**して、ユーザーに報告
+2. **タスクの複雑さを判断**して、適切なモデルを選択
+3. **具体的で明確な指示**を作成（トークン最適化のため）
+4. **send-and-wait.sh** を使ってタスクを送信
+5. **結果を確認**して、ユーザーに報告
 
-**タスク送信例:**
+#### モデル選択ガイド（重要！）
+
+| モデル | 単価 | 速度 | 推奨用途 |
+|--------|------|------|----------|
+| **haiku** | 最安 | 最速 | 簡単な調査、ファイル読み込み、単純なタスク |
+| **sonnet** | 中間 | 速い | 複雑なコーディング、リファクタリング（デフォルト） |
+| **opus** | 最高 | 遅い | 最も複雑な設計、アーキテクチャ判断 |
+
+**タスク送信例（モデル指定なし = Sonnet）:**
 ```bash
 wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev1_result.txtに報告'"
+```
+
+**タスク送信例（Haikuを指定）:**
+```bash
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev3 'README.mdを読んで、このプロジェクトの主な特徴を3つリストアップ。完了後results/dev3_result.txtに報告' 120 haiku"
+```
+
+**タスク送信例（Opusを指定）:**
+```bash
+wsl -e bash -c "cd /mnt/c/Users/YOUR_USERNAME/Documents/GitHub/claude-multi-agent-system && ./ai-team/send-and-wait.sh dev1 '複雑な認証システムの設計とセキュリティ実装。完了後results/dev1_result.txtに報告' 120 opus"
 ```
 
 **重要**: 指示は具体的に！
 - ❌ 悪い例: "ログイン機能作って"
 - ✅ 良い例: "src/auth/login.ts を編集して、login関数を実装。JWT認証使用。完了後results/dev2_result.txtに報告"
+
+**モデル選択のコツ:**
+- 📖 ファイルを読むだけ、調査だけ → **haiku**
+- 💻 通常のコーディング、機能実装 → **sonnet（デフォルト）**
+- 🧠 複雑な設計、難しいバグ修正 → **opus**
 
 ---
 

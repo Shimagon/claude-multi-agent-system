@@ -10,7 +10,7 @@ show_usage() {
 🚀 AIチーム メッセージ送信システム
 
 使用方法:
-  $0 [エージェント名] [メッセージ]
+  $0 [エージェント名] [メッセージ] [モデル(オプション)]
   $0 --list
 
 利用可能エージェント:
@@ -18,10 +18,15 @@ show_usage() {
   dev2    - 実行エージェント2
   dev3    - 実行エージェント3
 
+モデル指定（オプション）:
+  haiku   - 最速・最安（簡単なタスク向け）
+  sonnet  - バランス型（デフォルト）
+  opus    - 最高性能（複雑なタスク向け）
+
 使用例:
   $0 dev1 "ログイン画面のUIを作成してください"
   $0 dev2 "認証APIを実装してください"
-  $0 dev3 "テストコードを書いてください"
+  $0 dev3 "README.mdを調査" haiku
 EOF
 }
 
@@ -60,8 +65,13 @@ send_message() {
     local target="$1"
     local message="$2"
     local agent_name="$3"
+    local model="$4"
 
-    echo "📤 送信中: $agent_name へメッセージを送信..."
+    if [[ -n "$model" ]]; then
+        echo "📤 送信中: $agent_name へメッセージを送信（モデル: $model）..."
+    else
+        echo "📤 送信中: $agent_name へメッセージを送信..."
+    fi
 
     # プロンプトクリア
     tmux send-keys -t "$target" C-c
@@ -70,8 +80,13 @@ send_message() {
     tmux send-keys -t "$target" C-u
     sleep 0.2
 
-    # メッセージ送信
-    tmux send-keys -t "$target" "$message"
+    # モデル指定がある場合、メッセージにプレフィックスを追加
+    if [[ -n "$model" ]]; then
+        local full_message="[モデル: $model] $message"
+        tmux send-keys -t "$target" "$full_message"
+    else
+        tmux send-keys -t "$target" "$message"
+    fi
     sleep 0.3
 
     # Enter押下
@@ -100,6 +115,7 @@ main() {
 
     local agent="$1"
     local message="$2"
+    local model="${3:-}"
     local target=""
 
     case $agent in
@@ -125,14 +141,21 @@ main() {
     fi
 
     # メッセージ送信
-    send_message "$target" "$message" "$agent"
+    send_message "$target" "$message" "$agent" "$model"
 
     # ログ記録
-    log_message "$agent" "$message"
+    if [[ -n "$model" ]]; then
+        log_message "$agent" "[モデル: $model] $message"
+    else
+        log_message "$agent" "$message"
+    fi
 
     echo ""
     echo "🎯 メッセージ詳細:"
     echo "   宛先: $agent ($target)"
+    if [[ -n "$model" ]]; then
+        echo "   モデル: $model"
+    fi
     echo "   内容: \"$message\""
     echo "   ログ: $SCRIPT_DIR/logs/communication.log"
 

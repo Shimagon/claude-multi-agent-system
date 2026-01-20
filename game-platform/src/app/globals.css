@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  /* Friendly & Pop Theme Colors */
+  --background: #FFF8F0;
+  --foreground: #2D1B69;
+
+  /* Primary Colors - Vibrant Orange */
+  --primary: #FF6B35;
+  --primary-hover: #FF5722;
+
+  /* Secondary Colors - Playful Purple */
+  --secondary: #7C4DFF;
+  --secondary-hover: #651FFF;
+
+  /* Accent Colors */
+  --accent-pink: #FF4081;
+  --accent-yellow: #FFD740;
+  --accent-green: #69F0AE;
+  --accent-blue: #40C4FF;
+
+  /* Gradients */
+  --gradient-fun: linear-gradient(135deg, #FF6B35 0%, #FF4081 50%, #7C4DFF 100%);
+  --gradient-sunset: linear-gradient(135deg, #FFD740 0%, #FF6B35 100%);
+
+  /* Shadows */
+  --shadow-pop: 0 4px 14px rgba(255, 107, 53, 0.3);
+  --shadow-card: 0 8px 32px rgba(45, 27, 105, 0.1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Geist', Arial, Helvetica, sans-serif;
+}
+
+/* Mobile-first touch target minimum: 48px */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Fun button animations */
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 4px 14px rgba(255, 107, 53, 0.3); }
+  50% { box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5); }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

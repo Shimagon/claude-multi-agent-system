@@ -5,13 +5,19 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [[ $# -lt 2 ]]; then
-    echo "使用方法: $0 [dev1|dev2|dev3] \"タスク内容\" [タイムアウト秒(デフォルト120)]"
+    echo "使用方法: $0 [dev1|dev2|dev3] \"タスク内容\" [タイムアウト秒] [モデル]"
+    echo ""
+    echo "モデル指定（オプション）:"
+    echo "  haiku  - 最速・最安（簡単なタスク向け）"
+    echo "  sonnet - バランス型（デフォルト）"
+    echo "  opus   - 最高性能（複雑なタスク向け）"
     exit 1
 fi
 
 AGENT="$1"
 TASK="$2"
 TIMEOUT="${3:-120}"
+MODEL="${4:-}"  # 空の場合はデフォルト（sonnet）
 
 RESULT_FILE="$SCRIPT_DIR/results/${AGENT}_result.txt"
 
@@ -22,8 +28,13 @@ rm -f "$RESULT_FILE"
 START_TIME=$(date +%s)
 
 # タスク送信
-echo "📤 $AGENT にタスクを送信中..."
-"$SCRIPT_DIR/send-message.sh" "$AGENT" "$TASK"
+if [[ -n "$MODEL" ]]; then
+    echo "📤 $AGENT にタスクを送信中（モデル: $MODEL）..."
+    "$SCRIPT_DIR/send-message.sh" "$AGENT" "$TASK" "$MODEL"
+else
+    echo "📤 $AGENT にタスクを送信中..."
+    "$SCRIPT_DIR/send-message.sh" "$AGENT" "$TASK"
+fi
 
 echo ""
 echo "⏳ 結果を待機中（最大${TIMEOUT}秒）..."
