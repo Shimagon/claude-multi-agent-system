@@ -297,6 +297,80 @@ export async function createInvitation({
   };
 }
 
+// ============================================
+// Admin Route Guard
+// ============================================
+
+export interface AdminGuardResult {
+  isAdmin: boolean;
+  isAuthenticated: boolean;
+  user: Awaited<ReturnType<typeof getCurrentUser>> | null;
+  error?: string;
+}
+
+/**
+ * Admin route guard function
+ * Use this to protect admin-only routes
+ *
+ * @returns AdminGuardResult with authentication and admin status
+ *
+ * @example
+ * // In a server component or API route
+ * const { isAdmin, isAuthenticated, error } = await adminRouteGuard();
+ * if (!isAuthenticated) {
+ *   redirect('/login');
+ * }
+ * if (!isAdmin) {
+ *   redirect('/unauthorized');
+ * }
+ */
+export async function adminRouteGuard(): Promise<AdminGuardResult> {
+  const user = await getCurrentUser();
+
+  // Not authenticated
+  if (!user) {
+    return {
+      isAdmin: false,
+      isAuthenticated: false,
+      user: null,
+      error: 'Authentication required',
+    };
+  }
+
+  // Check admin by email
+  const emailIsAdmin = user.email ? isAdminEmail(user.email) : false;
+
+  // Check admin by profile (database)
+  const profile = await getUserProfile(user.id);
+  const profileIsAdmin = profile?.is_admin ?? false;
+
+  const isAdmin = emailIsAdmin || profileIsAdmin;
+
+  if (!isAdmin) {
+    return {
+      isAdmin: false,
+      isAuthenticated: true,
+      user,
+      error: 'Admin access required',
+    };
+  }
+
+  return {
+    isAdmin: true,
+    isAuthenticated: true,
+    user,
+  };
+}
+
+/**
+ * Quick check if current user is admin (no detailed result)
+ * @returns true if user is authenticated and is admin
+ */
+export async function isCurrentUserAdmin(): Promise<boolean> {
+  const result = await adminRouteGuard();
+  return result.isAdmin;
+}
+
 /**
  * Get all invitations created by current user
  */

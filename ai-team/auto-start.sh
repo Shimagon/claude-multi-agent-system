@@ -30,7 +30,11 @@ echo "✅ マルチエージェントシステム準備完了！"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "📺 監視画面を開くには別ターミナルで:"
-echo "   wsl -e bash -c 'tmux attach -t team'"
+if [[ "$(uname)" == "Darwin" ]]; then
+    echo "   tmux attach -t team"
+else
+    echo "   wsl -e bash -c 'tmux attach -t team'"
+fi
 echo ""
 echo "📨 タスク送信:"
 echo "   PM(VSCode拡張Claude)に話しかけるだけでOK！"

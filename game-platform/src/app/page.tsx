@@ -1,4 +1,48 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser } from '@/lib/supabase';
+
 export default function Home() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function checkAuth() {
+      const user = await getCurrentUser();
+
+      // 未ログイン → /login にリダイレクト
+      if (!user) {
+        router.replace('/login');
+        return;
+      }
+
+      // メール未確認 → /verify-email にリダイレクト
+      if (!user.email_confirmed_at) {
+        router.replace('/verify-email');
+        return;
+      }
+
+      // 認証OK
+      setIsLoading(false);
+    }
+
+    checkAuth();
+  }, [router]);
+
+  // ローディング中
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="text-6xl animate-bounce">🎮</div>
+          <p className="text-[var(--foreground)]/70">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
       {/* Header */}

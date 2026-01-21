@@ -25,15 +25,15 @@ tmux split-window -v -t team:0.0 -c "$PROJECT_DIR"
 # 各画面でClaude起動
 # team:0.0 = dev1
 tmux send-keys -t team:0.0 "cd $PROJECT_DIR" C-m
-tmux send-keys -t team:0.0 "claude --dangerously-skip-permissions $SCRIPT_DIR/instructions/developer.md" C-m
+tmux send-keys -t team:0.0 "claude $SCRIPT_DIR/instructions/developer.md" C-m
 
 # team:0.1 = dev2
 tmux send-keys -t team:0.1 "cd $PROJECT_DIR" C-m
-tmux send-keys -t team:0.1 "claude --dangerously-skip-permissions $SCRIPT_DIR/instructions/developer.md" C-m
+tmux send-keys -t team:0.1 "claude $SCRIPT_DIR/instructions/developer.md" C-m
 
 # team:0.2 = dev3
 tmux send-keys -t team:0.2 "cd $PROJECT_DIR" C-m
-tmux send-keys -t team:0.2 "claude --dangerously-skip-permissions $SCRIPT_DIR/instructions/developer.md" C-m
+tmux send-keys -t team:0.2 "claude $SCRIPT_DIR/instructions/developer.md" C-m
 
 echo ""
 echo "✅ AI並列実行チームを起動しました！"
